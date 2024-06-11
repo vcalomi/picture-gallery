@@ -27,6 +27,10 @@ def delete_user_route(user_id):
 def upload_photo_route(user_id):
     return upload_photo(user_id)
 
+@app.route("/delete/photo/<user_id>/<photo_id>", methods=["DELETE"])
+def delete_photo_route(user_id, photo_id):
+    return delete_photo(user_id, photo_id)
+
 if __name__ == "__main__":
     print("Starting server...")
     with app.app_context():

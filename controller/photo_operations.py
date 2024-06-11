@@ -23,3 +23,20 @@ def upload_photo(user_id):
     db.session.commit()
 
     return jsonify({"message":"New photo added"}), 201
+
+def delete_photo(user_id, photo_id):
+
+    user = User.query.get(user_id)
+
+    if not user:
+        return jsonify({"message":"A user that doesn't exist can't delete a photo"}), 400
+
+    photo = Photo.query.get(photo_id)
+
+    if not photo:
+        return jsonify({"message":"The photo doesn't exist"}), 400
+    
+    db.session.delete(photo)
+    db.session.commit()
+
+    return jsonify({"message":"Photo deleted"}), 200
