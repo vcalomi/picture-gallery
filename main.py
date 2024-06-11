@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from config import db
-from models.User import User
+from controller.user_operations import *
 
 app = Flask(__name__)
 port: int = 5000
@@ -15,32 +15,12 @@ def main():
     return "<h1>Hello world</h1>"
 
 @app.route("/create/user", methods=['POST'])
-def create_user():
-    data = request.get_json()
-
-    if not data or not "username" in data or not "email" in data:
-        return jsonify({"message": "Missing fields"}), 400
-    
-    name = data["username"]
-    email = data["email"]
-    password = data["password"]
-
-    new_user = User(username=name, email=email, password=password)
-    db.session.add(new_user)
-    db.session.commit()
-
-    return jsonify({"message": "User created succesfully"}), 201
+def create_user_route():
+    return create_user()
 
 @app.route("/delete/user/<user_id>", methods=['DELETE'])
-def delete_user(user_id):
-    user = User.query.get(user_id)
-    if not user:
-        return jsonify({"message": "User doesn't exist"}), 404
-    
-    db.session.delete(user)
-    db.session.commit()
-
-    return jsonify({"message": "User deleted"}), 200
+def delete_user_route(user_id):
+    return delete_user(user_id)
 
 if __name__ == "__main__":
     print("Starting server...")
