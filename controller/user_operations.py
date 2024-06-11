@@ -28,12 +28,22 @@ def delete_user(user_id):
 
     return jsonify({"message": "User deleted"}), 200
 
+def serialize_photo(photo):
+    return {
+        "id": photo.id,
+        "name": photo.name,
+        "description": photo.description,
+        "url": photo.url,
+        "created_at": photo.created_at.strftime("%Y-%m-%d %H:%M")
+    }
+
 def serialize_user(user):
+    photos = [serialize_photo(photo) for photo in user.photos]
     return {
         "id": user.id,
         "username": user.username,
         "email": user.email,
-        # "photos": user.photos
+        "photos": photos
     }
 
 def get_users():
