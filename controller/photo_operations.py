@@ -1,8 +1,11 @@
-from flask import jsonify, request
+from flask import jsonify, request, Blueprint
 from models.Photo import Photo
 from models.User import User
 from config import db
 
+photo_bp = Blueprint("photo_bp", __name__)
+
+@photo_bp.route("/create/<user_id>", methods=["POST"])
 def upload_photo(user_id):
     
     user = User.query.get(user_id)
@@ -24,6 +27,7 @@ def upload_photo(user_id):
 
     return jsonify({"message":"New photo added"}), 201
 
+@photo_bp.route("/delete/<photo_id>", methods=["DELETE"])
 def delete_photo(user_id, photo_id):
 
     user = User.query.get(user_id)

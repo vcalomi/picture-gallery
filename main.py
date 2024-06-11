@@ -1,7 +1,7 @@
 from flask import Flask
 from config import db
 from controller.user_operations import user_bp
-from controller.photo_operations import *
+from controller.photo_operations import photo_bp
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -19,13 +19,7 @@ def main():
 
 app.register_blueprint(user_bp, url_prefix="/api/user")
 
-@app.route("/add/photo/<user_id>", methods=["POST"])
-def upload_photo_route(user_id):
-    return upload_photo(user_id)
-
-@app.route("/delete/photo/<user_id>/<photo_id>", methods=["DELETE"])
-def delete_photo_route(user_id, photo_id):
-    return delete_photo(user_id, photo_id)
+app.register_blueprint(photo_bp, url_prefix="/api/photo")
 
 if __name__ == "__main__":
     print("Starting server...")
