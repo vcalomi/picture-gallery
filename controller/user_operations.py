@@ -27,3 +27,20 @@ def delete_user(user_id):
     db.session.commit()
 
     return jsonify({"message": "User deleted"}), 200
+
+def serialize_user(user):
+    return {
+        "id": user.id,
+        "username": user.username,
+        "email": user.email,
+        # "photos": user.photos
+    }
+
+def get_users():
+    users = User.query.all()
+    if not users:
+        return jsonify({"message": "There isn't any users"}), 404
+    
+    json_users = [serialize_user(user) for user in users]
+
+    return jsonify(json_users, 200)

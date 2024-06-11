@@ -1,9 +1,11 @@
-from flask import Flask, jsonify, request
+from flask import Flask
 from config import db
 from controller.user_operations import *
 from controller.photo_operations import *
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 port: int = 5000
 
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:0402@localhost/photo_gallery"
@@ -22,6 +24,10 @@ def create_user_route():
 @app.route("/delete/user/<user_id>", methods=['DELETE'])
 def delete_user_route(user_id):
     return delete_user(user_id)
+
+@app.route("/get/user", methods=["GET"])
+def get_user_route():
+    return get_users()
 
 @app.route("/add/photo/<user_id>", methods=["POST"])
 def upload_photo_route(user_id):
