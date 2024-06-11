@@ -1,7 +1,10 @@
-from flask import jsonify, request
+from flask import jsonify, request, Blueprint
 from models.User import User
 from config import db
 
+user_bp = Blueprint("user_bp", __name__)
+
+@user_bp.route("/create", methods=["POST"])
 def create_user():
     data = request.get_json()
 
@@ -18,6 +21,7 @@ def create_user():
 
     return jsonify({"message": "User created succesfully"}), 201
 
+@user_bp.route("/delete/<user_id>", methods=["DELETE"])
 def delete_user(user_id):
     user = User.query.get(user_id)
     if not user:
@@ -28,7 +32,7 @@ def delete_user(user_id):
 
     return jsonify({"message": "User deleted"}), 200
 
-def serialize_photo(photo):
+def _serialize_photo(photo):
     return {
         "id": photo.id,
         "name": photo.name,
@@ -37,8 +41,8 @@ def serialize_photo(photo):
         "created_at": photo.created_at.strftime("%Y-%m-%d %H:%M")
     }
 
-def serialize_user(user):
-    photos = [serialize_photo(photo) for photo in user.photos]
+def _serialize_user(user):
+    photos = [_serialize_photo(photo) for photo in user.photos]
     return {
         "id": user.id,
         "username": user.username,
@@ -46,11 +50,12 @@ def serialize_user(user):
         "photos": photos
     }
 
+@user_bp.route("/", methods=["GET"])
 def get_users():
     users = User.query.all()
     if not users:
         return jsonify({"message": "There isn't any users"}), 404
     
-    json_users = [serialize_user(user) for user in users]
+    json_users = [_serialize_user(user) for user in users]
 
     return jsonify(json_users, 200)
