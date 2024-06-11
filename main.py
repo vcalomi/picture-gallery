@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from config import db
 from controller.user_operations import *
+from controller.photo_operations import *
 
 app = Flask(__name__)
 port: int = 5000
@@ -21,6 +22,10 @@ def create_user_route():
 @app.route("/delete/user/<user_id>", methods=['DELETE'])
 def delete_user_route(user_id):
     return delete_user(user_id)
+
+@app.route("/add/photo/<user_id>", methods=["POST"])
+def upload_photo_route(user_id):
+    return upload_photo(user_id)
 
 if __name__ == "__main__":
     print("Starting server...")
