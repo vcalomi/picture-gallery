@@ -59,3 +59,21 @@ def get_users():
     json_users = [_serialize_user(user) for user in users]
 
     return jsonify(json_users, 200)
+
+@user_bp.route("/login", methods=["POST"])
+def user_login():
+
+    data = request.get_json()
+
+    if not "username" in data or not "password" in data:
+        return jsonify({"message": "Missing fields"}), 400
+    
+    username = data["username"]
+    password = data["password"]
+    
+    user = User.query.filter_by(username=username).first()
+
+    if user.password != password:
+        return jsonify({"message": "Incorrect password"}), 403
+    
+    return jsonify(_serialize_user(user)), 200
