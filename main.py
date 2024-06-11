@@ -31,6 +31,17 @@ def create_user():
 
     return jsonify({"message": "User created succesfully"}), 201
 
+@app.route("/delete/user/<user_id>", methods=['DELETE'])
+def delete_user(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"message": "User doesn't exist"}), 404
+    
+    db.session.delete(user)
+    db.session.commit()
+
+    return jsonify({"message": "User deleted"}), 200
+
 if __name__ == "__main__":
     print("Starting server...")
     with app.app_context():
