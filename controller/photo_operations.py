@@ -5,10 +5,10 @@ from config import db
 
 photo_bp = Blueprint("photo_bp", __name__)
 
-@photo_bp.route("/create/<user_id>", methods=["POST"])
-def upload_photo(user_id):
+@photo_bp.route("/upload/<username>", methods=["POST"])
+def upload_photo(username):
     
-    user = User.query.get(user_id)
+    user = User.query.filter_by(username=username).first()
 
     if not user:
         return jsonify({"message":"A user that doesn't exist can't upload a photo"}), 400
@@ -21,7 +21,7 @@ def upload_photo(user_id):
     url = data["url"]
     description = data.get("description", "")
 
-    new_photo = Photo(name, description, url, user_id)
+    new_photo = Photo(name, description, url, user.id)
     db.session.add(new_photo)
     db.session.commit()
 
