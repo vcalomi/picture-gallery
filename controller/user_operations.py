@@ -4,11 +4,11 @@ from config import db
 
 user_bp = Blueprint("user_bp", __name__)
 
-@user_bp.route("/create", methods=["POST"])
+@user_bp.route("/register", methods=["POST"])
 def create_user():
     data = request.get_json()
 
-    if not data or not "username" in data or not "email" in data:
+    if not data or not "username" in data or not "email" in data or not "password" in data:
         return jsonify({"message": "Missing fields"}), 400
     
     name = data["username"]
@@ -19,7 +19,7 @@ def create_user():
     db.session.add(new_user)
     db.session.commit()
 
-    return jsonify({"message": "User created succesfully"}), 201
+    return jsonify(_serialize_user(new_user)), 201
 
 @user_bp.route("/delete/<user_id>", methods=["DELETE"])
 def delete_user(user_id):
