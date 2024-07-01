@@ -77,3 +77,10 @@ def user_login():
         return jsonify({"message": "Incorrect password"}), 403
     
     return jsonify(_serialize_user(user)), 200
+
+@user_bp.route("/<username>", methods=["GET"])
+def get_user_by_username(username):
+
+    user = User.query.filter_by(username=username).first()
+
+    return jsonify(_serialize_user(user)), 200
