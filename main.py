@@ -8,7 +8,7 @@ app = Flask(__name__)
 CORS(app)
 port: int = 5000
 
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:0402@localhost/photo_gallery"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql+psycopg2://postgres:0402@db:5432/photo-gallery"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
