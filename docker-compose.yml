@@ -1,5 +1,11 @@
 services:
   web:
+    command:
+      [
+        "sh",
+        "-c",
+        "python create_tables.py && python3 -m flask run --host=0.0.0.0",
+      ]
     build: .
     ports:
       - "5000:5000"
