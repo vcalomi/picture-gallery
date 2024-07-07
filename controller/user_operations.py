@@ -1,24 +1,19 @@
 from flask import jsonify, request, Blueprint
 from models.User import User
 from config import db
+from service.user_service import create_user
 
 user_bp = Blueprint("user_bp", __name__)
 
 @user_bp.route("/register", methods=["POST"])
-def create_user():
+def register_user():
     data = request.get_json()
-
-    if not data or not "username" in data or not "email" in data or not "password" in data:
-        return jsonify({"message": "Missing fields"}), 400
+    new_user = None
+    try:
+        new_user = create_user(data)
+    except Exception:
+        return jsonify({"message": "Missing data"}), 400
     
-    name = data["username"]
-    email = data["email"]
-    password = data["password"]
-
-    new_user = User(username=name, email=email, password=password)
-    db.session.add(new_user)
-    db.session.commit()
-
     return jsonify(_serialize_user(new_user)), 201
 
 @user_bp.route("/delete/<user_id>", methods=["DELETE"])
