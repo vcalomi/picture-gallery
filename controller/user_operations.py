@@ -1,7 +1,7 @@
 from flask import jsonify, request, Blueprint
 from models.User import User
 from config import db
-from service.user_service import create_user, delete_user
+from service.user_service import _serialize_user, check_credentials, create_user, delete_user, get_all_users, get_user_by_username
 
 user_bp = Blueprint("user_bp", __name__)
 
@@ -11,68 +11,43 @@ def register_user():
     new_user = None
     try:
         new_user = create_user(data)
-    except Exception:
-        return jsonify({"message": "Missing data"}), 400
+    except Exception as e:
+        return jsonify({"message": str(e)}), 400
     
-    return jsonify(_serialize_user(new_user)), 201
+    return jsonify(new_user), 201
 
 @user_bp.route("/delete/<user_id>", methods=["DELETE"])
 def erase_user(user_id):
     try:
         delete_user(user_id)
-    except Exception:
-        return jsonify({"message": "User doesn't exist"}), 404
+    except Exception as e:
+        return jsonify({"message": str(e)}), 404
     return jsonify({"message": "User deleted"}), 200
-
-def _serialize_photo(photo):
-    return {
-        "id": photo.id,
-        "name": photo.name,
-        "description": photo.description,
-        "url": photo.url,
-        "created_at": photo.created_at.strftime("%Y-%m-%d %H:%M")
-    }
-
-def _serialize_user(user):
-    photos = [_serialize_photo(photo) for photo in user.photos]
-    return {
-        "id": user.id,
-        "username": user.username,
-        "email": user.email,
-        "photos": photos
-    }
 
 @user_bp.route("/", methods=["GET"])
 def get_users():
-    users = User.query.all()
-    if not users:
-        return jsonify({"message": "There isn't any users"}), 404
-    
-    json_users = [_serialize_user(user) for user in users]
+    try:
+        json_users = get_all_users()
+    except Exception as e:
+        return jsonify({"message": str(e)}), 404
 
     return jsonify(json_users, 200)
 
 @user_bp.route("/login", methods=["POST"])
 def user_login():
-
     data = request.get_json()
-
-    if not "username" in data or not "password" in data:
-        return jsonify({"message": "Missing fields"}), 400
-    
-    username = data["username"]
-    password = data["password"]
-    
-    user = User.query.filter_by(username=username).first()
-
-    if user.password != password:
-        return jsonify({"message": "Incorrect password"}), 403
-    
-    return jsonify(_serialize_user(user)), 200
+    try:
+        user = check_credentials(data)
+    except Exception as e:
+        return jsonify({"message": str(e)}), 400
+    return jsonify(user), 200
 
 @user_bp.route("/<username>", methods=["GET"])
-def get_user_by_username(username):
+def get_user(username):
 
-    user = User.query.filter_by(username=username).first()
+    try:
+        user = get_user_by_username(username)
+    except Exception as e:
+        return jsonify({"message": str(e)}), 404
 
-    return jsonify(_serialize_user(user)), 200
+    return jsonify(user), 200
