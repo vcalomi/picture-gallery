@@ -14,3 +14,11 @@ def create_user(user_data):
     db.session.commit()
     
     return new_user
+
+def delete_user(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        raise Exception("User doesn't exist")
+    
+    db.session.delete(user)
+    db.session.commit()

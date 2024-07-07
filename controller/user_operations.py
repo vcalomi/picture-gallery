@@ -1,7 +1,7 @@
 from flask import jsonify, request, Blueprint
 from models.User import User
 from config import db
-from service.user_service import create_user
+from service.user_service import create_user, delete_user
 
 user_bp = Blueprint("user_bp", __name__)
 
@@ -17,14 +17,11 @@ def register_user():
     return jsonify(_serialize_user(new_user)), 201
 
 @user_bp.route("/delete/<user_id>", methods=["DELETE"])
-def delete_user(user_id):
-    user = User.query.get(user_id)
-    if not user:
+def erase_user(user_id):
+    try:
+        delete_user(user_id)
+    except Exception:
         return jsonify({"message": "User doesn't exist"}), 404
-    
-    db.session.delete(user)
-    db.session.commit()
-
     return jsonify({"message": "User deleted"}), 200
 
 def _serialize_photo(photo):
