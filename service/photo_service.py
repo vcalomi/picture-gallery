@@ -1,6 +1,5 @@
 from models.User import User
 from config import db
-from service.photo_service import _serialize_photo
 from models.Photo import Photo
 
 
@@ -35,7 +34,12 @@ def delete_photo(user_id, photo_id):
     
     db.session.delete(photo)
     db.session.commit()
-    
+
+def delete_user_photos(user_id):
+    photos = Photo.query.filter_by(user_id=user_id).all()
+    for photo in photos:
+        db.session.delete(photo)
+
 def _serialize_photo(photo):
     return {
         "id": photo.id,
