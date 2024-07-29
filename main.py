@@ -1,7 +1,7 @@
 from flask import Flask
 from config import db
 from controller.user_operations import user_bp
-from controller.photo_operations import photo_bp
+from controller.picture_operations import picture_bp
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
@@ -23,7 +23,7 @@ def main():
 
 app.register_blueprint(user_bp, url_prefix="/api/user")
 
-app.register_blueprint(photo_bp, url_prefix="/api/photo")
+app.register_blueprint(picture_bp, url_prefix="/api/picture")
 
 if __name__ == "__main__":
     print("Starting server...")

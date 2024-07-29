@@ -1,7 +1,7 @@
-from models.Photo import Photo
+from models.Picture import Picture
 from models.User import User
 from config import db
-from service.photo_service import _serialize_photo, delete_user_photos
+from service.picture_service import _serialize_picture, delete_user_pictures
 
 def create_user(user_data):
     if not user_data or not "username" in user_data or not "email" in user_data or not "password" in user_data:
@@ -22,7 +22,7 @@ def delete_user(user_id):
     if not user:
         raise Exception("User doesn't exist")
     
-    delete_user_photos(user_id)
+    delete_user_pictures(user_id)
     
     db.session.delete(user)
     db.session.commit()
@@ -56,10 +56,10 @@ def get_user_by_username(username):
     return _serialize_user(user)
 
 def _serialize_user(user):
-    photos = [_serialize_photo(photo) for photo in user.photos]
+    pictures = [_serialize_picture(picture) for picture in user.pictures]
     return {
         "id": user.id,
         "username": user.username,
         "email": user.email,
-        "photos": photos
+        "pictures": pictures
     }
